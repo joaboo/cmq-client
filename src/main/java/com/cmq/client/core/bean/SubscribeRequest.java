@@ -42,7 +42,7 @@ public class SubscribeRequest extends Request {
 	}
 
 	@Override
-	protected void addParams(TreeMap<String, String> params) {
+	protected void addParams(final TreeMap<String, String> params) {
 		put(params, "topicName", topicName);
 		put(params, "subscriptionName", subscriptionName);
 		put(params, "protocol", protocol);

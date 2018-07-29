@@ -33,7 +33,7 @@ public class CreateQueueRequest extends Request {
 	}
 
 	@Override
-	protected void addParams(TreeMap<String, String> params) {
+	protected void addParams(final TreeMap<String, String> params) {
 		put(params, "queueName", queueName);
 		put(params, "maxMsgHeapNum", maxMsgHeapNum);
 		put(params, "pollingWaitSeconds", pollingWaitSeconds);

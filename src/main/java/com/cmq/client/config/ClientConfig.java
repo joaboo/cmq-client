@@ -10,16 +10,18 @@ import com.cmq.client.consumer.MessageListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
 public class ClientConfig implements Serializable {
 	private static final long serialVersionUID = -5229501132453986291L;
 
 	private String secretId;
 	private String secretKey;
 	private String signatureMethod;
-	private UrlMeta queueUrl;
-	private UrlMeta topicUrl;
+	private Endpoint queueEndpoint;
+	private Endpoint topicEndpoint;
 
 	private List<ProducerConfig> producerConfigs;
 	private List<ConsumerConfig> consumerConfigs;
@@ -27,12 +29,12 @@ public class ClientConfig implements Serializable {
 	private long httpTimeoutInMillis = Constants.DEFAULT_HTTP_TIMEOUT;
 	private int httpPoolSize = Constants.DEFAULT_HTTP_POOL_SIZE;
 
-	public UrlMeta getUrl(MQModel mqModel) {
+	public Endpoint getEndpoint(MQModel mqModel) {
 		switch (mqModel) {
 		case QUEUE:
-			return queueUrl;
+			return queueEndpoint;
 		case TOPIC:
-			return topicUrl;
+			return topicEndpoint;
 		default:
 			return null;
 		}
@@ -41,7 +43,8 @@ public class ClientConfig implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
-	public static class UrlMeta implements Serializable {
+	@ToString
+	public static class Endpoint implements Serializable {
 		private static final long serialVersionUID = -5949161306916234257L;
 
 		private String url;
@@ -54,6 +57,7 @@ public class ClientConfig implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@ToString
 	public static class ProducerConfig implements Serializable {
 		private static final long serialVersionUID = 5887421849061890108L;
 
@@ -64,6 +68,7 @@ public class ClientConfig implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@ToString
 	public static class ConsumerConfig implements Serializable {
 		private static final long serialVersionUID = 3187298188984768980L;
 
@@ -89,6 +94,7 @@ public class ClientConfig implements Serializable {
 	@Data
 	@NoArgsConstructor
 	@AllArgsConstructor
+	@ToString
 	public static class Subscription implements Serializable {
 		private static final long serialVersionUID = -5216243760038859990L;
 

@@ -4,8 +4,12 @@ import com.cmq.client.common.util.ObjectUtils;
 import com.cmq.client.remoting.RemotingResponse;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 @Data
+@EqualsAndHashCode
+@ToString
 public abstract class Response implements RemotingResponse {
 	protected static final int SUCCESS = 0;
 
@@ -26,7 +30,7 @@ public abstract class Response implements RemotingResponse {
 	// 错误信息
 	private String message;
 	// 模块错误码
-	private String errorCode;
+	private String errorCode = ObjectUtils.EMPTY_STRING;
 	// 服务器请求Id
 	private String requestId;
 
@@ -34,6 +38,7 @@ public abstract class Response implements RemotingResponse {
 		return getCode() == SUCCESS;
 	}
 
+	@Override
 	public void resolveErrorCode() {
 		if (ObjectUtils.isEmpty(message)) {
 			return;

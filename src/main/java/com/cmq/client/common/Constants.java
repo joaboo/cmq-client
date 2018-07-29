@@ -6,9 +6,6 @@ public class Constants {
 
 	public static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
 
-	public static final String SIGN_METHOD_SHA1 = "HmacSHA1";
-	public static final String SIGN_METHOD_SHA256 = "HmacSHA256";
-
 	public static final String PROTOCOL_HTTP = "http";
 	public static final String PROTOCOL_HTTPS = "https";
 
@@ -20,6 +17,9 @@ public class Constants {
 
 	public static final String HTTP_METHOD_POST = "POST";
 	public static final String HTTP_METHOD_GET = "GET";
+
+	public static final String SIGN_METHOD_SHA1 = "HmacSHA1";
+	public static final String SIGN_METHOD_SHA256 = "HmacSHA256";
 
 	public static final long DEFAULT_HTTP_TIMEOUT = 3000L;
 	public static final int DEFAULT_HTTP_POOL_SIZE = 5;

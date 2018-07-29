@@ -30,7 +30,7 @@ public class CreateTopicRequest extends Request {
 	}
 
 	@Override
-	protected void addParams(TreeMap<String, String> params) {
+	protected void addParams(final TreeMap<String, String> params) {
 		put(params, "topicName", topicName);
 		put(params, "maxMsgSize", maxMsgSize);
 		put(params, "filterType", filterType);

@@ -33,7 +33,7 @@ public class ReceiveMessageRequest extends Request {
 	}
 
 	@Override
-	protected void addParams(TreeMap<String, String> params) {
+	protected void addParams(final TreeMap<String, String> params) {
 		put(params, "queueName", queueName);
 		put(params, "numOfMsg", numOfMsg);
 		put(params, "pollingWaitSeconds", pollingWaitSeconds);

@@ -81,8 +81,8 @@ public class CMQConfigBean {
 		clientConfig.setSecretId(secretId);
 		clientConfig.setSecretKey(secretKey);
 		clientConfig.setSignatureMethod(signatureMethod);
-		clientConfig.setQueueUrl(urlConfigBean.getQueueUrl());
-		clientConfig.setTopicUrl(urlConfigBean.getTopicUrl());
+		clientConfig.setQueueEndpoint(urlConfigBean.getQueueEndpoint());
+		clientConfig.setTopicEndpoint(urlConfigBean.getTopicEndpoint());
 		if (ObjectUtils.isNotEmpty(producerConfigBeans)) {
 			List<ProducerConfig> producerConfigs = producerConfigBeans.stream().map(ProducerConfigBean::getProducerConfig).collect(Collectors.toList());
 			clientConfig.setProducerConfigs(producerConfigs);
@@ -126,24 +126,24 @@ public class CMQConfigBean {
 			}
 		}
 
-		public ClientConfig.UrlMeta getTopicUrl() throws CMQException {
-			return getUrlMeta(outerNet ? Constants.ENDPOINT_TOPIC_OUTER : Constants.ENDPOINT_TOPIC_INNER);
+		public ClientConfig.Endpoint getTopicEndpoint() throws CMQException {
+			return getEndpoint(outerNet ? Constants.ENDPOINT_TOPIC_OUTER : Constants.ENDPOINT_TOPIC_INNER);
 		}
 
-		public ClientConfig.UrlMeta getQueueUrl() throws CMQException {
-			return getUrlMeta(outerNet ? Constants.ENDPOINT_QUEUE_OUTER : Constants.ENDPOINT_QUEUE_INNER);
+		public ClientConfig.Endpoint getQueueEndpoint() throws CMQException {
+			return getEndpoint(outerNet ? Constants.ENDPOINT_QUEUE_OUTER : Constants.ENDPOINT_QUEUE_INNER);
 		}
 
-		private ClientConfig.UrlMeta getUrlMeta(String hostFormat) {
+		private ClientConfig.Endpoint getEndpoint(String hostFormat) {
 			String host = String.format(hostFormat, region);
 			String url = protocol + "://" + host + path;
-			ClientConfig.UrlMeta urlMeta = new ClientConfig.UrlMeta();
-			urlMeta.setHost(host);
-			urlMeta.setPath(path);
-			urlMeta.setUrl(url);
-			urlMeta.setRegion(region);
-			urlMeta.setHttpMethod(Constants.HTTP_METHOD_POST);
-			return urlMeta;
+			ClientConfig.Endpoint endpoint = new ClientConfig.Endpoint();
+			endpoint.setHost(host);
+			endpoint.setPath(path);
+			endpoint.setUrl(url);
+			endpoint.setRegion(region);
+			endpoint.setHttpMethod(Constants.HTTP_METHOD_POST);
+			return endpoint;
 		}
 
 		public void valid() throws CMQException {

@@ -6,7 +6,7 @@ public interface RemotingRequest {
 
 	String getUrl();
 
-	Class<? extends RemotingResponse> getResponseType();
-
 	Map<String, String> getParameters();
+
+	Class<? extends RemotingResponse> getResponseType();
 }

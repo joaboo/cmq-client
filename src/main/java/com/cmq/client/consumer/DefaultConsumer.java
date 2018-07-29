@@ -10,6 +10,7 @@ import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import com.cmq.client.common.util.Assert;
 import com.cmq.client.common.util.NamedThreadFactory;
 import com.cmq.client.config.ClientConfig.ConsumerConfig;
 import com.cmq.client.core.CMQAdmin;
@@ -54,13 +55,18 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 			log.warn("Consumer already running..");
 			return;
 		}
+		Assert.notNull(messageListener, String.format("Consumer haven't messageListener -> consumerConfig:%", consumerConfig));
 
 		// 调用父类初始化方法
 		super.init();
 
 		// 获取消息任务
 		scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
-		scheduledExecutor.scheduleWithFixedDelay(new ReceiveTask(consumerConfig.getQueueName(), 16, 1), 10 * 1000L, consumerConfig.getPullIntervalInMillis(), TimeUnit.MILLISECONDS);
+		scheduledExecutor.scheduleWithFixedDelay(
+				new ReceiveTask(consumerConfig.getQueueName(), 16, 1),
+				10 * 1000L,
+				consumerConfig.getPullIntervalInMillis(),
+				TimeUnit.MILLISECONDS);
 
 		// 消费消息执行
 		taskExecutor = new ThreadPoolExecutor(
@@ -79,11 +85,15 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 			return;
 		}
 
-		scheduledExecutor.shutdown();
-		taskExecutor.shutdown();
+		try {
+			scheduledExecutor.shutdown();
+			taskExecutor.shutdown();
+		} catch (Exception e) {
+			log.error(String.format("Consumer shutdown error -> queueName:%s", consumerConfig.getQueueName()), e);
+		}
 	}
 
-	// 从 MQ Server获取消息
+	// 接收消息
 	class ReceiveTask implements Runnable {
 		final String queueName;
 		final int numOfMsg;
@@ -105,19 +115,20 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 				return;
 			}
 			int tmpNumOfMsg = freeSize > numOfMsg ? numOfMsg : freeSize;
-			receiveMessage(queueName, tmpNumOfMsg, pollingWaitSeconds);
+			receive(queueName, tmpNumOfMsg, pollingWaitSeconds);
 		}
 	}
 
-	private void execute(final String queueName, final Message message) {
-		taskExecutor.execute(new ExecuteTask(queueName, message));
+	private void consume(final String queueName, final Message message) {
+		taskExecutor.execute(new ConsumeTask(queueName, message));
 	}
 
-	class ExecuteTask implements Runnable {
+	// 消费消息
+	class ConsumeTask implements Runnable {
 		final String queueName;
 		final Message message;
 
-		ExecuteTask(String queueName, Message message) {
+		ConsumeTask(String queueName, Message message) {
 			this.queueName = queueName;
 			this.message = message;
 		}
@@ -126,14 +137,14 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 		public void run() {
 			try {
 				messageListener.onMessage(message);
-				deleteMessage(queueName, message.getReceiptHandle());
+				ack(queueName, message.getReceiptHandle());
 			} catch (Exception e) {
 				log.error(String.format("Message consume error -> message:%s", message), e);
 			}
 		}
 	}
 
-	private void receiveMessage(final String queueName, final int numOfMsg, final int pollingWaitSeconds) {
+	private void receive(final String queueName, final int numOfMsg, final int pollingWaitSeconds) {
 		cmqClient.batchReceiveMessage(queueName, numOfMsg, pollingWaitSeconds, new ClientCallback() {
 			@Override
 			public void onFailure(Throwable t) {
@@ -157,7 +168,7 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 
 				List<MsgInfo> msgInfoList = response.getMsgInfoList();
 				for (MsgInfo msgInfo : msgInfoList) {
-					execute(queueName, handleMessage(msgInfo));
+					consume(queueName, handleMessage(msgInfo));
 				}
 			}
 
@@ -175,7 +186,7 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 		});
 	}
 
-	private void deleteMessage(String queueName, String receiptHandle) {
+	private void ack(String queueName, String receiptHandle) {
 		cmqClient.deleteMessage(queueName, receiptHandle, new ClientCallback() {
 			@Override
 			public void onFailure(Throwable t) {
