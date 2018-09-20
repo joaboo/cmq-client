@@ -5,12 +5,11 @@ import com.cmq.client.exception.CMQException;
 import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString
 public class HttpResponse {
 
-	@Getter
 	private String content;
-	@Getter
 	private CMQException exception;
 
 	public HttpResponse(String content) {

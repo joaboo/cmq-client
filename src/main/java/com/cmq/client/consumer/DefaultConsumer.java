@@ -110,7 +110,7 @@ public class DefaultConsumer extends CMQAdmin implements Consumer {
 			int queues = consumerConfig.getQueues();
 			int curSize = (int) ((ThreadPoolExecutor) taskExecutor).getQueue().size();
 			int freeSize = queues - curSize;
-			if (freeSize == 0) {
+			if (freeSize <= 0) {
 				log.debug("BlockingQueue is full");
 				return;
 			}

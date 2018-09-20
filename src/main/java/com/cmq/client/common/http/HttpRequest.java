@@ -7,15 +7,14 @@ import com.cmq.client.common.util.Assert;
 import lombok.Getter;
 import lombok.ToString;
 
+@Getter
 @ToString
 public class HttpRequest {
 
-	@Getter
 	private String url;
-	@Getter
 	private Map<String, String> params;
 
-	public HttpRequest(Builder builder) {
+	HttpRequest(Builder builder) {
 		this.url = builder.url;
 		this.params = builder.params;
 	}
