@@ -42,3 +42,6 @@ public class Consumer1 implements MessageListener {
 }
 ```
 
+## 2019-07-29 更新
+时隔一年，官方基于HTTP的SDK的一些BUG都已修复，不过简陋依旧，幸好的是现在已经推出了支持基于TCP协议的SDK调用，地址如下：
+https://github.com/tencentyun/cmq-java-tcp-sdk
