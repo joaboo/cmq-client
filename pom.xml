@@ -18,7 +18,7 @@
 		<okhttp.version>3.10.0</okhttp.version>
 		<httpclient.version>4.5.5</httpclient.version>
 		<jackson.version>2.9.6</jackson.version>
-		<spring.version>4.3.17.RELEASE</spring.version>
+		<spring.version>4.3.29.RELEASE</spring.version>
 	</properties>
 
 	<dependencyManagement>
